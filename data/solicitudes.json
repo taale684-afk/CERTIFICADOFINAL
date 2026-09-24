@@ -1,0 +1,16 @@
+{
+  "POL-2026-0417": {
+    "radicado": "POL-2026-0417",
+    "nombreCertificado": "Duplicado de diploma con apostilla",
+    "estado": "pendiente",
+    "areaActual": "Decanatura de Facultad",
+    "descripcionArea": "El decanato está revisando la información académica antes de continuar con la legalización del documento."
+  },
+  "POL-2026-0512": {
+    "radicado": "POL-2026-0512",
+    "nombreCertificado": "Certificación especial de continuidad académica",
+    "estado": "trasladada",
+    "areaActual": "Legalizaciones (Apostilla)",
+    "descripcionArea": "La solicitud fue trasladada aquí porque el documento requiere apostilla para uso en el exterior."
+  }
+}

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PoliSeguimiento — Incremento 1</title>
+<style>
+  :root{
+    --ink:#1B2A44; --slate:#5B6072; --gold:#B8862E;
+    --amber-bg:#F5E7D3; --amber:#A8631F; --gold-soft:#EFE2C6;
+    --line:#DAD5C8; --paper:#F6F4EF; --card:#FFFFFF;
+  }
+  body{ font-family: -apple-system, Arial, sans-serif; background:var(--paper); color:var(--ink);
+        display:flex; justify-content:center; padding:40px 16px; }
+  .card{ background:var(--card); border:1px solid var(--line); border-top:5px solid var(--ink);
+         border-radius:4px; padding:28px; width:100%; max-width:480px; }
+  h1{ font-size:20px; margin:0 0 6px; }
+  p.sub{ color:var(--slate); font-size:13px; margin:0 0 20px; }
+  .row{ display:flex; gap:8px; margin-bottom:16px; }
+  input{ flex:1; padding:10px; border:1px solid var(--line); border-radius:3px; font-size:14px; }
+  button{ padding:10px 18px; border:none; border-radius:3px; background:var(--ink); color:#fff;
+          cursor:pointer; font-size:14px; }
+  #resultado{ margin-top:10px; }
+  .badge{ display:inline-block; padding:4px 10px; border-radius:3px; font-size:12px; font-weight:600; }
+  .badge.pendiente{ background:var(--amber-bg); color:var(--amber); }
+  .badge.trasladada{ background:var(--gold-soft); color:var(--gold); }
+  .error{ color:#9C4B3B; font-size:13px; }
+  .hint{ color:var(--slate); font-size:12px; margin-top:14px; }
+</style>
+</head>
+<body>
+  <div class="card">
+    <h1>Consulta el estado de tu solicitud</h1>
+    <p class="sub">Incremento 1 — ejemplo: POL-2026-0417 o POL-2026-0512</p>
+    <div class="row">
+      <input id="radicado" placeholder="Ej. POL-2026-0417" />
+      <button onclick="consultar()">Consultar</button>
+    </div>
+    <div id="resultado"></div>
+    <p class="hint">Datos de prueba (mock) para el Incremento 1. La integración con Registro Académico queda para una iteración posterior.</p>
+  </div>
+
+  <script>
+    async function consultar() {
+      const radicado = document.getElementById('radicado').value.trim();
+      const div = document.getElementById('resultado');
+      div.innerHTML = 'Consultando...';
+      try {
+        const res = await fetch('/api/solicitudes/' + encodeURIComponent(radicado));
+        const data = await res.json();
+        if (!res.ok) {
+          div.innerHTML = '<p class="error">' + data.mensaje + '</p>';
+          return;
+        }
+        div.innerHTML = `
+          <p><strong>${data.nombreCertificado}</strong><br>
+          Radicado ${data.radicado}
+          <span class="badge ${data.estado}">${data.estado}</span></p>
+          <p><strong>Área actual:</strong> ${data.areaActual}</p>
+          <p>${data.descripcionArea}</p>
+        `;
+      } catch (e) {
+        div.innerHTML = '<p class="error">Ocurrió un error al consultar. Intenta de nuevo.</p>';
+      }
+    }
+  </script>
+</body>
+</html>
