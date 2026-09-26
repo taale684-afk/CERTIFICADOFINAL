@@ -6,9 +6,10 @@ Consulta del estado y la ubicación de una solicitud de certificado especial del
 
 - Buscar una solicitud por número de radicado (formato `POL-AAAA-NNNN`).
 - Ver el área actual y el estado (`pendiente` o `trasladada`) de esa solicitud.
+- Ver el historial de movimientos entre áreas (fecha y acción realizada en cada etapa).
 - Manejar los casos de radicado inválido y radicado no encontrado.
 
-Quedan **fuera de alcance** en este incremento: historial de movimientos, detalle del pendiente, traslado entre áreas, y la integración con los sistemas reales de la institución (se usan datos de prueba en `data/solicitudes.json`).
+Quedan **fuera de alcance** en este incremento: el detalle del pendiente, el aviso de traslado entre áreas como pantalla independiente, y la integración con los sistemas reales de la institución (se usan datos de prueba en `data/solicitudes.json`). La validación de estos estados y áreas con Registro Académico, y la prueba con al menos dos usuarios sobre este prototipo navegable, quedan documentadas como próximos pasos en el plan de la iteración.
 
 ## Cómo ejecutar el proyecto
 

@@ -26,6 +26,11 @@
   .badge.trasladada{ background:var(--gold-soft); color:var(--gold); }
   .error{ color:#9C4B3B; font-size:13px; }
   .hint{ color:var(--slate); font-size:12px; margin-top:14px; }
+  .historial{ margin-top:14px; border-top:1px solid var(--line); padding-top:10px; }
+  .historial h3{ font-size:13px; margin:0 0 8px; }
+  .historial ul{ list-style:none; padding:0; margin:0; }
+  .historial li{ font-size:12.5px; padding:6px 0; border-bottom:1px dashed var(--line); }
+  .historial .fecha{ color:var(--slate); font-size:11px; }
 </style>
 </head>
 <body>
@@ -58,6 +63,13 @@
           <span class="badge ${data.estado}">${data.estado}</span></p>
           <p><strong>Área actual:</strong> ${data.areaActual}</p>
           <p>${data.descripcionArea}</p>
+          <div class="historial">
+            <h3>Historial de movimientos</h3>
+            <ul>
+              ${data.historial.map(h => `<li><strong>${h.area}</strong><br>
+                <span class="fecha">${h.fecha}</span> — ${h.accion}</li>`).join('')}
+            </ul>
+          </div>
         `;
       } catch (e) {
         div.innerHTML = '<p class="error">Ocurrió un error al consultar. Intenta de nuevo.</p>';

@@ -9,22 +9,33 @@ const dataset = {
     nombreCertificado: "Duplicado de diploma con apostilla",
     estado: "pendiente",
     areaActual: "Decanatura de Facultad",
+    historial: [
+      { area: "Registro y Control Académico", fecha: "2026-08-12", accion: "Solicitud radicada" },
+      { area: "Tesorería", fecha: "2026-08-13", accion: "Pago verificado" },
+      { area: "Decanatura de Facultad", fecha: "2026-08-14", accion: "En revisión — pendiente de documento" },
+    ],
   },
   "POL-2026-0512": {
     radicado: "POL-2026-0512",
     nombreCertificado: "Certificación especial de continuidad académica",
     estado: "trasladada",
     areaActual: "Legalizaciones (Apostilla)",
+    historial: [
+      { area: "Registro y Control Académico", fecha: "2026-08-05", accion: "Solicitud radicada" },
+      { area: "Legalizaciones (Apostilla)", fecha: "2026-08-10", accion: "Trasladada para legalización internacional" },
+    ],
   },
 };
 
-// Caso principal: radicado válido y existente -> devuelve la solicitud
+// Caso principal: radicado válido y existente -> devuelve la solicitud con su historial
 (function casoPrincipal() {
   const r = buscarSolicitud("POL-2026-0417", dataset);
   assert.strictEqual(r.ok, true);
   assert.strictEqual(r.codigo, 200);
   assert.strictEqual(r.solicitud.estado, "pendiente");
-  console.log("OK - caso principal (radicado válido y existente)");
+  assert.ok(Array.isArray(r.solicitud.historial), "debe incluir un arreglo de historial");
+  assert.strictEqual(r.solicitud.historial.length, 3);
+  console.log("OK - caso principal (radicado válido, existente y con historial)");
 })();
 
 // Caso alternativo: radicado válido en minúsculas -> se normaliza y encuentra
