@@ -31,6 +31,9 @@
   .historial ul{ list-style:none; padding:0; margin:0; }
   .historial li{ font-size:12.5px; padding:6px 0; border-bottom:1px dashed var(--line); }
   .historial .fecha{ color:var(--slate); font-size:11px; }
+  .tiempo-box{ margin-top:14px; padding:10px 12px; border-radius:3px; font-size:12.5px; }
+  .tiempo-box.ok{ background:#E7EFE9; color:#3F6D53; }
+  .tiempo-box.alerta{ background:#F3E4E0; color:#9C4B3B; font-weight:600; }
 </style>
 </head>
 <body>
@@ -57,12 +60,18 @@
           div.innerHTML = '<p class="error">' + data.mensaje + '</p>';
           return;
         }
+        const t = data.tiempo;
+        const tiempoHtml = t.retrasada
+          ? `<div class="tiempo-box alerta">⚠ Esta solicitud lleva ${t.diasHabilesTranscurridos} días hábiles, por encima de los ${t.diasHabilesEsperados} días esperados para este certificado.</div>`
+          : `<div class="tiempo-box ok">Tiempo transcurrido: ${t.diasHabilesTranscurridos} de ${t.diasHabilesEsperados} días hábiles esperados.</div>`;
+
         div.innerHTML = `
           <p><strong>${data.nombreCertificado}</strong><br>
           Radicado ${data.radicado}
           <span class="badge ${data.estado}">${data.estado}</span></p>
           <p><strong>Área actual:</strong> ${data.areaActual}</p>
           <p>${data.descripcionArea}</p>
+          ${tiempoHtml}
           <div class="historial">
             <h3>Historial de movimientos</h3>
             <ul>

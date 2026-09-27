@@ -5,6 +5,8 @@
     "estado": "pendiente",
     "areaActual": "Decanatura de Facultad",
     "descripcionArea": "El decanato está revisando la información académica antes de continuar con la legalización del documento.",
+    "fechaRadicacion": "2026-08-12",
+    "diasHabilesEsperados": 8,
     "historial": [
       { "area": "Registro y Control Académico", "fecha": "2026-08-12", "accion": "Solicitud radicada" },
       { "area": "Tesorería", "fecha": "2026-08-13", "accion": "Pago verificado" },
@@ -17,6 +19,8 @@
     "estado": "trasladada",
     "areaActual": "Legalizaciones (Apostilla)",
     "descripcionArea": "La solicitud fue trasladada aquí porque el documento requiere apostilla para uso en el exterior.",
+    "fechaRadicacion": "2026-08-05",
+    "diasHabilesEsperados": 10,
     "historial": [
       { "area": "Registro y Control Académico", "fecha": "2026-08-05", "accion": "Solicitud radicada" },
       { "area": "Registro y Control Académico", "fecha": "2026-08-06", "accion": "Validación inicial completa" },
