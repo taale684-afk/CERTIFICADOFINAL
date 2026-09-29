@@ -1,29 +1,31 @@
 {
   "POL-2026-0417": {
     "radicado": "POL-2026-0417",
-    "nombreCertificado": "Duplicado de diploma con apostilla",
+    "nombreCertificado": "Copia Diploma de Grado",
+    "costo": "$97.200",
     "estado": "pendiente",
     "areaActual": "Decanatura de Facultad",
-    "descripcionArea": "El decanato está revisando la información académica antes de continuar con la legalización del documento.",
+    "descripcionArea": "La decanatura está confirmando la información académica antes de autorizar la expedición de la copia del diploma.",
     "fechaRadicacion": "2026-08-12",
     "diasHabilesEsperados": 8,
     "historial": [
       { "area": "Registro y Control Académico", "fecha": "2026-08-12", "accion": "Solicitud radicada" },
-      { "area": "Tesorería", "fecha": "2026-08-13", "accion": "Pago verificado" },
+      { "area": "Tesorería", "fecha": "2026-08-13", "accion": "Pago de $97.200 verificado" },
       { "area": "Decanatura de Facultad", "fecha": "2026-08-14", "accion": "En revisión — pendiente de documento" }
     ]
   },
   "POL-2026-0512": {
     "radicado": "POL-2026-0512",
-    "nombreCertificado": "Certificación especial de continuidad académica",
+    "nombreCertificado": "Certificado de Notas General - Firma Original",
+    "costo": "$93.400",
     "estado": "trasladada",
     "areaActual": "Legalizaciones (Apostilla)",
     "descripcionArea": "La solicitud fue trasladada aquí porque el documento requiere apostilla para uso en el exterior.",
     "fechaRadicacion": "2026-08-05",
-    "diasHabilesEsperados": 10,
+    "diasHabilesEsperados": 5,
     "historial": [
       { "area": "Registro y Control Académico", "fecha": "2026-08-05", "accion": "Solicitud radicada" },
-      { "area": "Registro y Control Académico", "fecha": "2026-08-06", "accion": "Validación inicial completa" },
+      { "area": "Registro y Control Académico", "fecha": "2026-08-06", "accion": "Pago de $93.400 verificado" },
       { "area": "Legalizaciones (Apostilla)", "fecha": "2026-08-10", "accion": "Trasladada para legalización internacional" }
     ]
   }

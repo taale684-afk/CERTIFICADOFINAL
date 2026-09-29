@@ -14,7 +14,14 @@ Quedan **fuera de alcance** en este incremento: el detalle del pendiente, el avi
 
 ### Nota sobre los datos de ejemplo y la fecha actual
 
-Los radicados de prueba tienen fechas de radicación fijas (agosto de 2026). Como el cálculo de días hábiles se hace siempre contra la fecha real del día en que se ejecuta la aplicación, es normal y esperado que ambos ejemplos aparezcan como **retrasados** si los pruebas después de esa fecha: eso es precisamente el comportamiento que la alerta debe mostrar. Para ver el caso "dentro del plazo" de forma controlada, revisa las pruebas automatizadas (`npm test`), que fijan una fecha de referencia específica para cada escenario.
+Los radicados de prueba corresponden a dos certificados reales publicados por el Politécnico Grancolombiano, con sus tiempos de entrega y costos 2026 oficiales (https://www.poli.edu.co/certificados):
+
+| Radicado | Certificado | Tiempo de entrega publicado | Costo 2026 |
+|---|---|---|---|
+| POL-2026-0417 | Copia Diploma de Grado | 8 días hábiles | $97.200 |
+| POL-2026-0512 | Certificado de Notas General - Firma Original | 2 a 5 días hábiles (se tomó el máximo, 5, como plazo de alerta) | $93.400 |
+
+Las fechas de radicación son fijas (agosto de 2026) y sirven solo para la demostración; como el cálculo de días hábiles se hace siempre contra la fecha real del día en que se ejecuta la aplicación, es normal y esperado que ambos ejemplos aparezcan como **retrasados** si los pruebas después de esa fecha: eso es precisamente el comportamiento que la alerta debe mostrar. Para ver el caso "dentro del plazo" de forma controlada, revisa las pruebas automatizadas (`npm test`), que fijan una fecha de referencia específica para cada escenario.
 
 ## Cómo ejecutar el proyecto
 

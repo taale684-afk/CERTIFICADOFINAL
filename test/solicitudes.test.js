@@ -7,24 +7,26 @@ const { evaluarTiempo, diasHabilesEntre } = require("../lib/tiempos");
 const dataset = {
   "POL-2026-0417": {
     radicado: "POL-2026-0417",
-    nombreCertificado: "Duplicado de diploma con apostilla",
+    nombreCertificado: "Copia Diploma de Grado",
+    costo: "$97.200",
     estado: "pendiente",
     areaActual: "Decanatura de Facultad",
     fechaRadicacion: "2026-08-03",
     diasHabilesEsperados: 8,
     historial: [
       { area: "Registro y Control Académico", fecha: "2026-08-12", accion: "Solicitud radicada" },
-      { area: "Tesorería", fecha: "2026-08-13", accion: "Pago verificado" },
+      { area: "Tesorería", fecha: "2026-08-13", accion: "Pago de $97.200 verificado" },
       { area: "Decanatura de Facultad", fecha: "2026-08-14", accion: "En revisión — pendiente de documento" },
     ],
   },
   "POL-2026-0512": {
     radicado: "POL-2026-0512",
-    nombreCertificado: "Certificación especial de continuidad académica",
+    nombreCertificado: "Certificado de Notas General - Firma Original",
+    costo: "$93.400",
     estado: "trasladada",
     areaActual: "Legalizaciones (Apostilla)",
     fechaRadicacion: "2026-08-05",
-    diasHabilesEsperados: 10,
+    diasHabilesEsperados: 5,
     historial: [
       { area: "Registro y Control Académico", fecha: "2026-08-05", accion: "Solicitud radicada" },
       { area: "Legalizaciones (Apostilla)", fecha: "2026-08-10", accion: "Trasladada para legalización internacional" },
