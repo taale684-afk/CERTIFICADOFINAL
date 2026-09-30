@@ -32,6 +32,20 @@ const dataset = {
       { area: "Legalizaciones (Apostilla)", fecha: "2026-08-10", accion: "Trasladada para legalización internacional" },
     ],
   },
+  "POL-2026-0603": {
+    radicado: "POL-2026-0603",
+    nombreCertificado: "Certificado de Notas por Periodo - Firma Original",
+    costo: "$27.800",
+    estado: "en revision",
+    areaActual: "Registro y Control Académico",
+    fechaRadicacion: "2026-09-28",
+    diasHabilesEsperados: 5,
+    historial: [
+      { area: "Registro y Control Académico", fecha: "2026-09-28", accion: "Solicitud radicada" },
+      { area: "Tesorería", fecha: "2026-09-29", accion: "Pago de $27.800 verificado" },
+      { area: "Registro y Control Académico", fecha: "2026-09-30", accion: "En revisión — dentro del tiempo esperado" },
+    ],
+  },
 };
 
 // Caso principal: radicado válido y existente -> devuelve la solicitud con su historial y su tiempo
@@ -64,6 +78,18 @@ const dataset = {
   assert.strictEqual(r.solicitud.tiempo.diasHabilesTranscurridos, 5);
   assert.strictEqual(r.solicitud.tiempo.retrasada, false);
   console.log("OK - ventana de tiempos (dentro del plazo, sin alerta)");
+})();
+
+// Radicado nuevo y dentro del plazo: no debe mostrar la alerta de retraso.
+(function radicadoDentroDelPlazo() {
+  const fechaReferencia = new Date("2026-09-30T00:00:00"); // 2 días hábiles después del 2026-09-28
+  const r = buscarSolicitud("POL-2026-0603", dataset, fechaReferencia);
+  assert.strictEqual(r.ok, true);
+  assert.strictEqual(r.solicitud.estado, "en revision");
+  assert.strictEqual(r.solicitud.tiempo.diasHabilesTranscurridos, 2);
+  assert.strictEqual(r.solicitud.tiempo.diasHabilesEsperados, 5);
+  assert.strictEqual(r.solicitud.tiempo.retrasada, false);
+  console.log("OK - radicado POL-2026-0603 dentro del plazo (sin alerta)");
 })();
 
 // diasHabilesEntre no debe contar sábados ni domingos.

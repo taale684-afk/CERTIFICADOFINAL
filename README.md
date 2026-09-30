@@ -16,12 +16,13 @@ Quedan **fuera de alcance** en este incremento: el detalle del pendiente, el avi
 
 Los radicados de prueba corresponden a dos certificados reales publicados por el Politécnico Grancolombiano, con sus tiempos de entrega y costos 2026 oficiales (https://www.poli.edu.co/certificados):
 
-| Radicado | Certificado | Tiempo de entrega publicado | Costo 2026 |
-|---|---|---|---|
-| POL-2026-0417 | Copia Diploma de Grado | 8 días hábiles | $97.200 |
-| POL-2026-0512 | Certificado de Notas General - Firma Original | 2 a 5 días hábiles (se tomó el máximo, 5, como plazo de alerta) | $93.400 |
+| Radicado | Certificado | Tiempo de entrega publicado | Costo 2026 | Estado esperado |
+|---|---|---|---|---|
+| POL-2026-0417 | Copia Diploma de Grado | 8 días hábiles | $97.200 | Retrasada (radicada en agosto) |
+| POL-2026-0512 | Certificado de Notas General - Firma Original | 2 a 5 días hábiles (se tomó el máximo, 5, como plazo de alerta) | $93.400 | Retrasada (radicada en agosto) |
+| POL-2026-0603 | Certificado de Notas por Periodo - Firma Original | 2 a 5 días hábiles (máximo 5) | $27.800 | Dentro del plazo, sin alerta (radicada recientemente) |
 
-Las fechas de radicación son fijas (agosto de 2026) y sirven solo para la demostración; como el cálculo de días hábiles se hace siempre contra la fecha real del día en que se ejecuta la aplicación, es normal y esperado que ambos ejemplos aparezcan como **retrasados** si los pruebas después de esa fecha: eso es precisamente el comportamiento que la alerta debe mostrar. Para ver el caso "dentro del plazo" de forma controlada, revisa las pruebas automatizadas (`npm test`), que fijan una fecha de referencia específica para cada escenario.
+Las fechas de radicación de POL-2026-0417 y POL-2026-0512 son fijas (agosto de 2026), por lo que aparecerán como **retrasadas** si las consultas después de esa fecha: eso es precisamente el comportamiento que la alerta debe mostrar. POL-2026-0603 se radicó pocos días hábiles antes de esta entrega, por lo que se mantendrá **dentro del plazo** durante los primeros días hábiles siguientes; pasado ese margen, también empezará a mostrarse como retrasada, ya que el cálculo siempre se hace contra la fecha real del día en que se ejecuta la aplicación. Para ver ambos comportamientos (con y sin alerta) de forma controlada y permanente, revisa las pruebas automatizadas (`npm test`), que fijan una fecha de referencia específica para cada escenario.
 
 ## Cómo ejecutar el proyecto
 
@@ -30,7 +31,7 @@ npm install
 npm start
 ```
 
-Luego abre `http://localhost:3000` en el navegador. Radicados de prueba disponibles: `POL-2026-0417` (pendiente) y `POL-2026-0512` (trasladada).
+Luego abre `http://localhost:3000` en el navegador. Radicados de prueba disponibles: `POL-2026-0417` (pendiente, retrasada), `POL-2026-0512` (trasladada, retrasada) y `POL-2026-0603` (en revisión, dentro del plazo).
 
 ## Cómo correr las pruebas
 

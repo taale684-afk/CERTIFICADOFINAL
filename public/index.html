@@ -24,6 +24,7 @@
   .badge{ display:inline-block; padding:4px 10px; border-radius:3px; font-size:12px; font-weight:600; }
   .badge.pendiente{ background:var(--amber-bg); color:var(--amber); }
   .badge.trasladada{ background:var(--gold-soft); color:var(--gold); }
+  .badge.revision{ background:#E7EFE9; color:#3F6D53; }
   .error{ color:#9C4B3B; font-size:13px; }
   .hint{ color:var(--slate); font-size:12px; margin-top:14px; }
   .historial{ margin-top:14px; border-top:1px solid var(--line); padding-top:10px; }
@@ -65,10 +66,12 @@
           ? `<div class="tiempo-box alerta">⚠ Esta solicitud lleva ${t.diasHabilesTranscurridos} días hábiles, por encima de los ${t.diasHabilesEsperados} días esperados para este certificado.</div>`
           : `<div class="tiempo-box ok">Tiempo transcurrido: ${t.diasHabilesTranscurridos} de ${t.diasHabilesEsperados} días hábiles esperados.</div>`;
 
+        const claseBadge = { pendiente: 'pendiente', trasladada: 'trasladada', 'en revision': 'revision' }[data.estado] || 'revision';
+
         div.innerHTML = `
           <p><strong>${data.nombreCertificado}</strong><br>
           Radicado ${data.radicado} · Costo 2026: ${data.costo}
-          <span class="badge ${data.estado}">${data.estado}</span></p>
+          <span class="badge ${claseBadge}">${data.estado}</span></p>
           <p><strong>Área actual:</strong> ${data.areaActual}</p>
           <p>${data.descripcionArea}</p>
           ${tiempoHtml}

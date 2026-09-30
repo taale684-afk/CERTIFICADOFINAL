@@ -28,5 +28,20 @@
       { "area": "Registro y Control Académico", "fecha": "2026-08-06", "accion": "Pago de $93.400 verificado" },
       { "area": "Legalizaciones (Apostilla)", "fecha": "2026-08-10", "accion": "Trasladada para legalización internacional" }
     ]
+  },
+  "POL-2026-0603": {
+    "radicado": "POL-2026-0603",
+    "nombreCertificado": "Certificado de Notas por Periodo - Firma Original",
+    "costo": "$27.800",
+    "estado": "en revision",
+    "areaActual": "Registro y Control Académico",
+    "descripcionArea": "La solicitud está siendo procesada directamente por Registro y Control Académico; no requiere revisión de otras áreas.",
+    "fechaRadicacion": "2026-09-28",
+    "diasHabilesEsperados": 5,
+    "historial": [
+      { "area": "Registro y Control Académico", "fecha": "2026-09-28", "accion": "Solicitud radicada" },
+      { "area": "Tesorería", "fecha": "2026-09-29", "accion": "Pago de $27.800 verificado" },
+      { "area": "Registro y Control Académico", "fecha": "2026-09-30", "accion": "En revisión — dentro del tiempo esperado" }
+    ]
   }
 }
