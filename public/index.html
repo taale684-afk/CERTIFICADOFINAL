@@ -24,8 +24,17 @@
   .badge{ display:inline-block; padding:4px 10px; border-radius:3px; font-size:12px; font-weight:600; }
   .badge.pendiente{ background:var(--amber-bg); color:var(--amber); }
   .badge.trasladada{ background:var(--gold-soft); color:var(--gold); }
+  .badge.revision{ background:#E7EFE9; color:#3F6D53; }
   .error{ color:#9C4B3B; font-size:13px; }
   .hint{ color:var(--slate); font-size:12px; margin-top:14px; }
+  .historial{ margin-top:14px; border-top:1px solid var(--line); padding-top:10px; }
+  .historial h3{ font-size:13px; margin:0 0 8px; }
+  .historial ul{ list-style:none; padding:0; margin:0; }
+  .historial li{ font-size:12.5px; padding:6px 0; border-bottom:1px dashed var(--line); }
+  .historial .fecha{ color:var(--slate); font-size:11px; }
+  .tiempo-box{ margin-top:14px; padding:10px 12px; border-radius:3px; font-size:12.5px; }
+  .tiempo-box.ok{ background:#E7EFE9; color:#3F6D53; }
+  .tiempo-box.alerta{ background:#F3E4E0; color:#9C4B3B; font-weight:600; }
 </style>
 </head>
 <body>
@@ -52,12 +61,27 @@
           div.innerHTML = '<p class="error">' + data.mensaje + '</p>';
           return;
         }
+        const t = data.tiempo;
+        const tiempoHtml = t.retrasada
+          ? `<div class="tiempo-box alerta">⚠ Esta solicitud lleva ${t.diasHabilesTranscurridos} días hábiles, por encima de los ${t.diasHabilesEsperados} días esperados para este certificado.</div>`
+          : `<div class="tiempo-box ok">Tiempo transcurrido: ${t.diasHabilesTranscurridos} de ${t.diasHabilesEsperados} días hábiles esperados.</div>`;
+
+        const claseBadge = { pendiente: 'pendiente', trasladada: 'trasladada', 'en revision': 'revision' }[data.estado] || 'revision';
+
         div.innerHTML = `
           <p><strong>${data.nombreCertificado}</strong><br>
-          Radicado ${data.radicado}
-          <span class="badge ${data.estado}">${data.estado}</span></p>
+          Radicado ${data.radicado} · Costo 2026: ${data.costo}
+          <span class="badge ${claseBadge}">${data.estado}</span></p>
           <p><strong>Área actual:</strong> ${data.areaActual}</p>
           <p>${data.descripcionArea}</p>
+          ${tiempoHtml}
+          <div class="historial">
+            <h3>Historial de movimientos</h3>
+            <ul>
+              ${data.historial.map(h => `<li><strong>${h.area}</strong><br>
+                <span class="fecha">${h.fecha}</span> — ${h.accion}</li>`).join('')}
+            </ul>
+          </div>
         `;
       } catch (e) {
         div.innerHTML = '<p class="error">Ocurrió un error al consultar. Intenta de nuevo.</p>';
