@@ -2,7 +2,7 @@
 // Ejecutar con: npm test
 const assert = require("assert");
 const { buscarSolicitud } = require("../lib/solicitudes");
-const { evaluarTiempo, diasHabilesEntre } = require("../lib/tiempos");
+const { evaluarTiempo, diasHabilesEntre, esFestivoColombia } = require("../lib/tiempos");
 
 const dataset = {
   "POL-2026-0417": {
@@ -11,7 +11,7 @@ const dataset = {
     costo: "$97.200",
     estado: "pendiente",
     areaActual: "Decanatura de Facultad",
-    fechaRadicacion: "2026-08-03",
+    fechaRadicacion: "2026-09-07", // lunes sin festivos cerca, para aislar el ejemplo del docente
     diasHabilesEsperados: 8,
     historial: [
       { area: "Registro y Control Académico", fecha: "2026-08-12", accion: "Solicitud radicada" },
@@ -50,7 +50,7 @@ const dataset = {
 
 // Caso principal: radicado válido y existente -> devuelve la solicitud con su historial y su tiempo
 (function casoPrincipal() {
-  const fechaReferencia = new Date("2026-08-17T00:00:00"); // 10 días hábiles después del 2026-08-03
+  const fechaReferencia = new Date("2026-09-21T00:00:00"); // 10 días hábiles después del 2026-09-07
   const r = buscarSolicitud("POL-2026-0417", dataset, fechaReferencia);
   assert.strictEqual(r.ok, true);
   assert.strictEqual(r.codigo, 200);
@@ -63,7 +63,7 @@ const dataset = {
 // Ventana de tiempos — ejemplo exacto pedido por el docente: se esperan 8 días
 // hábiles y la solicitud lleva 10 -> debe marcarse como retrasada.
 (function ventanaDeTiemposConAlerta() {
-  const fechaReferencia = new Date("2026-08-17T00:00:00"); // 10 días hábiles después del 2026-08-03
+  const fechaReferencia = new Date("2026-09-21T00:00:00"); // 10 días hábiles después del 2026-09-07 (sin festivos de por medio)
   const r = buscarSolicitud("POL-2026-0417", dataset, fechaReferencia);
   assert.strictEqual(r.solicitud.tiempo.diasHabilesTranscurridos, 10);
   assert.strictEqual(r.solicitud.tiempo.diasHabilesEsperados, 8);
@@ -73,7 +73,7 @@ const dataset = {
 
 // Ventana de tiempos — dentro del plazo: no debe activarse la alerta.
 (function ventanaDeTiemposSinAlerta() {
-  const fechaReferencia = new Date("2026-08-10T00:00:00"); // 5 días hábiles después del 2026-08-03
+  const fechaReferencia = new Date("2026-09-14T00:00:00"); // 5 días hábiles después del 2026-09-07
   const r = buscarSolicitud("POL-2026-0417", dataset, fechaReferencia);
   assert.strictEqual(r.solicitud.tiempo.diasHabilesTranscurridos, 5);
   assert.strictEqual(r.solicitud.tiempo.retrasada, false);
@@ -94,11 +94,21 @@ const dataset = {
 
 // diasHabilesEntre no debe contar sábados ni domingos.
 (function conteoExcluyeFinesDeSemana() {
-  const inicio = new Date("2026-08-03T00:00:00"); // lunes
-  const fin = new Date("2026-08-10T00:00:00"); // lunes siguiente (incluye un fin de semana)
+  const inicio = new Date("2026-09-07T00:00:00"); // lunes
+  const fin = new Date("2026-09-14T00:00:00"); // lunes siguiente (incluye un fin de semana)
   const dias = diasHabilesEntre(inicio, fin);
   assert.strictEqual(dias, 5);
   console.log("OK - el conteo de días hábiles excluye sábados y domingos");
+})();
+
+// diasHabilesEntre tampoco debe contar festivos colombianos (ej. 12 de octubre,
+// Día de la Raza, que en 2026 cae lunes).
+(function conteoExcluyeFestivosColombianos() {
+  const inicio = new Date("2026-10-09T00:00:00"); // viernes
+  const fin = new Date("2026-10-13T00:00:00"); // martes (incluye sáb, dom y el festivo del lunes)
+  const dias = diasHabilesEntre(inicio, fin);
+  assert.strictEqual(dias, 1); // solo cuenta el martes 13
+  console.log("OK - el conteo de días hábiles excluye festivos colombianos (12 de octubre)");
 })();
 
 // Caso alternativo: radicado válido en minúsculas -> se normaliza y encuentra
@@ -125,6 +135,13 @@ const dataset = {
   assert.strictEqual(r.codigo, 404);
   assert.strictEqual(r.error, "no_encontrada");
   console.log("OK - caso de error (radicado no encontrado)");
+})();
+
+// esFestivoColombia debe reconocer el festivo y rechazar un día cercano que no lo es.
+(function identificaFestivoColombiano() {
+  assert.strictEqual(esFestivoColombia(new Date("2026-10-12T00:00:00")), true); // Día de la Raza
+  assert.strictEqual(esFestivoColombia(new Date("2026-10-13T00:00:00")), false); // martes normal
+  console.log("OK - esFestivoColombia identifica correctamente el 12 de octubre de 2026");
 })();
 
 console.log("\nTodas las pruebas pasaron correctamente.");
