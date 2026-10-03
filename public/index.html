@@ -8,52 +8,106 @@
 </head>
 <body>
   <div class="card">
-    <h1>Consulta el estado de tu solicitud</h1>
-    <p class="sub">Incremento 1 — ejemplo: POL-2026-0417 o POL-2026-0512</p>
-    <div class="row">
-      <input id="radicado" placeholder="Ej. POL-2026-0417" />
-      <button onclick="consultar()">Consultar</button>
+    <div class="stepper">
+      <div class="step-tab active" id="tab-1">1. Buscar</div>
+      <div class="step-tab" id="tab-2">2. Estado actual</div>
+      <div class="step-tab" id="tab-3">3. Historial</div>
     </div>
-    <div id="resultado"></div>
-    <p class="hint">Datos de prueba (mock) para el Incremento 1. La integración con Registro Académico queda para una iteración posterior.</p>
+
+    <!-- Pantalla 1: Buscar -->
+    <div class="screen" id="screen-1">
+      <h1>Consulta el estado de tu solicitud</h1>
+      <p class="sub">Incremento 1 — ejemplo: POL-2026-0417, POL-2026-0512 o POL-2026-0603</p>
+      <div class="row">
+        <input id="radicado" placeholder="Ej. POL-2026-0417" />
+        <button onclick="consultar()">Consultar</button>
+      </div>
+      <div id="error-busqueda"></div>
+      <p class="hint">Datos de prueba (mock) para el Incremento 1. La integración con Registro Académico queda para una iteración posterior.</p>
+    </div>
+
+    <!-- Pantalla 2: Estado actual (incluye la alerta de tiempo) -->
+    <div class="screen hidden" id="screen-2">
+      <h1>Estado actual</h1>
+      <div id="estado-contenido"></div>
+      <div class="nav-row">
+        <button class="ghost" onclick="goTo(1)">Volver a buscar</button>
+        <button onclick="goTo(3)">Ver historial</button>
+      </div>
+    </div>
+
+    <!-- Pantalla 3: Historial de movimientos -->
+    <div class="screen hidden" id="screen-3">
+      <h1>Historial de movimientos</h1>
+      <div id="historial-contenido"></div>
+      <div class="nav-row">
+        <button class="ghost" onclick="goTo(2)">Volver al estado</button>
+        <button onclick="goTo(1)">Consultar otra solicitud</button>
+      </div>
+    </div>
   </div>
 
   <script>
+    let ultimaConsulta = null;
+
+    function claseBadgeDe(estado) {
+      return { pendiente: 'pendiente', trasladada: 'trasladada', 'en revision': 'revision' }[estado] || 'revision';
+    }
+
     async function consultar() {
       const radicado = document.getElementById('radicado').value.trim();
-      const div = document.getElementById('resultado');
-      div.innerHTML = 'Consultando...';
+      const errDiv = document.getElementById('error-busqueda');
+      errDiv.innerHTML = 'Consultando...';
       try {
         const res = await fetch('/api/solicitudes/' + encodeURIComponent(radicado));
         const data = await res.json();
         if (!res.ok) {
-          div.innerHTML = '<p class="error">' + data.mensaje + '</p>';
+          errDiv.innerHTML = '<p class="error">' + data.mensaje + '</p>';
           return;
         }
-        const t = data.tiempo;
-        const tiempoHtml = t.retrasada
-          ? `<div class="tiempo-box alerta">⚠ Esta solicitud lleva ${t.diasHabilesTranscurridos} días hábiles, por encima de los ${t.diasHabilesEsperados} días esperados para este certificado.</div>`
-          : `<div class="tiempo-box ok">Tiempo transcurrido: ${t.diasHabilesTranscurridos} de ${t.diasHabilesEsperados} días hábiles esperados.</div>`;
-
-        const claseBadge = { pendiente: 'pendiente', trasladada: 'trasladada', 'en revision': 'revision' }[data.estado] || 'revision';
-
-        div.innerHTML = `
-          <p><strong>${data.nombreCertificado}</strong><br>
-          Radicado ${data.radicado} · Costo 2026: ${data.costo}
-          <span class="badge ${claseBadge}">${data.estado}</span></p>
-          <p><strong>Área actual:</strong> ${data.areaActual}</p>
-          <p>${data.descripcionArea}</p>
-          ${tiempoHtml}
-          <div class="historial">
-            <h3>Historial de movimientos</h3>
-            <ul>
-              ${data.historial.map(h => `<li><strong>${h.area}</strong><br>
-                <span class="fecha">${h.fecha}</span> — ${h.accion}</li>`).join('')}
-            </ul>
-          </div>
-        `;
+        errDiv.innerHTML = '';
+        ultimaConsulta = data;
+        renderEstado(data);
+        renderHistorial(data);
+        goTo(2);
       } catch (e) {
-        div.innerHTML = '<p class="error">Ocurrió un error al consultar. Intenta de nuevo.</p>';
+        errDiv.innerHTML = '<p class="error">Ocurrió un error al consultar. Intenta de nuevo.</p>';
+      }
+    }
+
+    function renderEstado(data) {
+      const t = data.tiempo;
+      const tiempoHtml = t.retrasada
+        ? `<div class="tiempo-box alerta">⚠ Esta solicitud lleva ${t.diasHabilesTranscurridos} días hábiles, por encima de los ${t.diasHabilesEsperados} días esperados para este certificado.</div>`
+        : `<div class="tiempo-box ok">Tiempo transcurrido: ${t.diasHabilesTranscurridos} de ${t.diasHabilesEsperados} días hábiles esperados.</div>`;
+
+      document.getElementById('estado-contenido').innerHTML = `
+        <p><strong>${data.nombreCertificado}</strong><br>
+        Radicado ${data.radicado} · Costo 2026: ${data.costo}
+        <span class="badge ${claseBadgeDe(data.estado)}">${data.estado}</span></p>
+        <p><strong>Área actual:</strong> ${data.areaActual}</p>
+        <p>${data.descripcionArea}</p>
+        ${tiempoHtml}
+      `;
+    }
+
+    function renderHistorial(data) {
+      document.getElementById('historial-contenido').innerHTML = `
+        <div class="historial">
+          <ul>
+            ${data.historial.map(h => `<li><strong>${h.area}</strong><br>
+              <span class="fecha">${h.fecha}</span> — ${h.accion}</li>`).join('')}
+          </ul>
+        </div>
+      `;
+    }
+
+    function goTo(n) {
+      // Las pantallas 2 y 3 necesitan una consulta previa; si no existe, se vuelve a la 1.
+      if ((n === 2 || n === 3) && !ultimaConsulta) n = 1;
+      for (let i = 1; i <= 3; i++) {
+        document.getElementById('screen-' + i).classList.toggle('hidden', i !== n);
+        document.getElementById('tab-' + i).classList.toggle('active', i === n);
       }
     }
   </script>

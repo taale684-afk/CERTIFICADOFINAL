@@ -4,10 +4,11 @@ Consulta del estado y la ubicación de una solicitud de certificado especial del
 
 ## Alcance de este incremento
 
+- Tres pantallas navegables: **1. Buscar**, **2. Estado actual** y **3. Historial de movimientos**, con botones para moverse entre ellas (no se puede entrar a la 2 o la 3 sin haber hecho antes una consulta válida).
 - Buscar una solicitud por número de radicado (formato `POL-AAAA-NNNN`).
-- Ver el área actual y el estado (`pendiente` o `trasladada`) de esa solicitud.
-- Ver el historial de movimientos entre áreas (fecha y acción realizada en cada etapa).
-- Ver los días hábiles transcurridos desde la radicación frente a los días hábiles esperados, con una **alerta visible** cuando el tiempo esperado se supera (por ejemplo, se esperan 8 días hábiles y la solicitud lleva 10).
+- Ver el área actual y el estado (`pendiente`, `en revision` o `trasladada`) de esa solicitud.
+- Ver el historial de movimientos entre áreas (fecha y acción realizada en cada etapa), en su propia pantalla.
+- Ver los días hábiles transcurridos desde la radicación frente a los días hábiles esperados, con una **alerta visible** cuando el tiempo esperado se supera (por ejemplo, se esperan 8 días hábiles y la solicitud lleva 10). El cálculo excluye sábados, domingos **y los festivos oficiales de Colombia en 2026**.
 - Manejar los casos de radicado inválido y radicado no encontrado.
 
 Quedan **fuera de alcance** en este incremento: el detalle del pendiente, el aviso de traslado entre áreas como pantalla independiente, y la integración con los sistemas reales de la institución (se usan datos de prueba en `data/solicitudes.json`). La validación de estos estados y áreas con Registro Académico, y la prueba con al menos dos usuarios sobre este prototipo navegable, quedan documentadas como próximos pasos en el plan de la iteración.
@@ -43,10 +44,12 @@ npm test
 
 ```
 poliseguimiento/
-├── server.js              # Servidor Express y definición del endpoint
-├── lib/solicitudes.js      # Lógica de negocio (validación y búsqueda)
-├── data/solicitudes.json   # Datos de prueba (mock)
-├── public/index.html       # Frontend del Incremento 1
+├── server.js                # Servidor Express y definición del endpoint
+├── lib/solicitudes.js       # Lógica de negocio (validación y búsqueda)
+├── lib/tiempos.js           # Días hábiles, festivos colombianos y alerta de retraso
+├── data/solicitudes.json    # Datos de prueba (mock)
+├── public/index.html        # Frontend del Incremento 1 (3 pantallas navegables)
+├── public/css/styles.css    # Estilos, separados del HTML
 ├── test/solicitudes.test.js
 └── package.json
 ```
