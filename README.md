@@ -10,6 +10,7 @@ Consulta del estado y la ubicación de una solicitud de certificado especial del
 - Ver el historial de movimientos entre áreas (fecha y acción realizada en cada etapa), en su propia pantalla.
 - Ver los días hábiles transcurridos desde la radicación frente a los días hábiles esperados, con una **alerta visible** cuando el tiempo esperado se supera (por ejemplo, se esperan 8 días hábiles y la solicitud lleva 10). El cálculo excluye sábados, domingos **y los festivos oficiales de Colombia en 2026**.
 - Manejar los casos de radicado inválido y radicado no encontrado.
+- **Reenvío de documento para una modificación especial**: cuando una solicitud está en estado `pendiente`, la pantalla de Estado actual muestra un formulario para reenviar el documento corregido (nombre de archivo). Esto agrega un movimiento al historial y cambia el estado a `en revision`. Si la solicitud no está `pendiente` (por ejemplo, `trasladada`), el sistema rechaza el reenvío con un mensaje explicando por qué.
 
 Quedan **fuera de alcance** en este incremento: el detalle del pendiente, el aviso de traslado entre áreas como pantalla independiente, y la integración con los sistemas reales de la institución (se usan datos de prueba en `data/solicitudes.json`). La validación de estos estados y áreas con Registro Académico, y la prueba con al menos dos usuarios sobre este prototipo navegable, quedan documentadas como próximos pasos en el plan de la iteración.
 
@@ -41,7 +42,12 @@ npm install
 npm start
 ```
 
-Luego abre `http://localhost:3000` en el navegador. Radicados de prueba disponibles: `POL-2026-0417` (pendiente, retrasada), `POL-2026-0512` (trasladada, retrasada) y `POL-2026-0603` (en revisión, dentro del plazo).
+Luego abre `http://localhost:3000` en el navegador. Radicados de prueba disponibles: `POL-2026-0417` (pendiente, retrasada — prueba aquí el reenvío de documento), `POL-2026-0512` (trasladada, retrasada), `POL-2026-0603` (en revisión, dentro del plazo), y `POL-2026-0701` a `POL-2026-0707` (catálogo ampliado con los demás certificados reales).
+
+### Endpoints disponibles
+
+- `GET /api/solicitudes/:radicado` — consulta el estado, el historial y el tiempo de una solicitud.
+- `POST /api/solicitudes/:radicado/reenvio` — reenvía un documento para resolver una modificación especial (body JSON: `{ "nombreArchivo": "..." }`). Solo funciona si la solicitud está en estado `pendiente`; **esto modifica `data/solicitudes.json` de forma permanente** (no hay base de datos todavía), así que conserva una copia del archivo original si quieres repetir la demostración varias veces.
 
 ## Cómo correr las pruebas
 
