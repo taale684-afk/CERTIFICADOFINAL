@@ -20,8 +20,17 @@ Los radicados de prueba corresponden a dos certificados reales publicados por el
 | Radicado | Certificado | Tiempo de entrega publicado | Costo 2026 | Estado esperado |
 |---|---|---|---|---|
 | POL-2026-0417 | Copia Diploma de Grado | 8 días hábiles | $97.200 | Retrasada (radicada en agosto) |
-| POL-2026-0512 | Certificado de Notas General - Firma Original | 2 a 5 días hábiles (se tomó el máximo, 5, como plazo de alerta) | $93.400 | Retrasada (radicada en agosto) |
-| POL-2026-0603 | Certificado de Notas por Periodo - Firma Original | 2 a 5 días hábiles (máximo 5) | $27.800 | Dentro del plazo, sin alerta (radicada recientemente) |
+| POL-2026-0512 | Certificado de Notas General - Firma Original | 2 a 5 días hábiles (máximo 5) | $93.400 | Retrasada (radicada en agosto) |
+| POL-2026-0603 | Certificado de Notas por Periodo - Firma Original | 2 a 5 días hábiles (máximo 5) | $27.800 | Dentro del plazo |
+| POL-2026-0701 | Certificado Fecha de Inicio y Terminación Materias | 2 a 5 días hábiles (máximo 5) | $13.700 | Dentro del plazo |
+| POL-2026-0702 | Certificado ICETEX - Giro Adicional por Carga Académica | 2 a 5 días hábiles (máximo 5) | $13.700 | Dentro del plazo, trasladada |
+| POL-2026-0703 | Certificado ICETEX - Giro Adicional por Doble Titulación | 2 a 5 días hábiles (máximo 5) | $13.700 | Retrasada (radicada en agosto) |
+| POL-2026-0704 | Certificado de Intensidad Horaria Semanal, Inicio y Fin de Semestre | 2 a 5 días hábiles (máximo 5) | $13.700 | Dentro del plazo |
+| POL-2026-0705 | Certificado de Otros Pagos | 2 a 5 días hábiles (máximo 5) | $13.700 | Dentro del plazo |
+| POL-2026-0706 | Certificado de Contenidos Programáticos | 8 días hábiles (formato digital) | $59.100 | Dentro del plazo |
+| POL-2026-0707 | Copia Acta de Grado | 8 días hábiles | $47.700 | Retrasada (radicada en agosto), trasladada |
+
+Con esto, el catálogo cubre los **10 certificados** publicados oficialmente por el Politécnico Grancolombiano (https://www.poli.edu.co/certificados), no solo una muestra.
 
 Las fechas de radicación de POL-2026-0417 y POL-2026-0512 son fijas (agosto de 2026), por lo que aparecerán como **retrasadas** si las consultas después de esa fecha: eso es precisamente el comportamiento que la alerta debe mostrar. POL-2026-0603 se radicó pocos días hábiles antes de esta entrega, por lo que se mantendrá **dentro del plazo** durante los primeros días hábiles siguientes; pasado ese margen, también empezará a mostrarse como retrasada, ya que el cálculo siempre se hace contra la fecha real del día en que se ejecuta la aplicación. Para ver ambos comportamientos (con y sin alerta) de forma controlada y permanente, revisa las pruebas automatizadas (`npm test`), que fijan una fecha de referencia específica para cada escenario.
 

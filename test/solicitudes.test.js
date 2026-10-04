@@ -137,6 +137,46 @@ const dataset = {
   console.log("OK - caso de error (radicado no encontrado)");
 })();
 
+// Catálogo ampliado: un certificado ICETEX trasladado debe reportar el área correcta.
+(function catalogoAmpliadoIcetexTrasladado() {
+  const dataset2 = { "POL-2026-0702": {
+    radicado: "POL-2026-0702",
+    nombreCertificado: "Certificado ICETEX - Giro Adicional por Carga Académica",
+    costo: "$13.700",
+    estado: "trasladada",
+    areaActual: "ICETEX (Gestión Financiera)",
+    fechaRadicacion: "2026-09-29",
+    diasHabilesEsperados: 5,
+    historial: [
+      { area: "Registro y Control Académico", fecha: "2026-09-29", accion: "Solicitud radicada" },
+      { area: "ICETEX (Gestión Financiera)", fecha: "2026-10-01", accion: "Trasladada para confirmar carga académica" },
+    ],
+  }};
+  const r = buscarSolicitud("POL-2026-0702", dataset2);
+  assert.strictEqual(r.ok, true);
+  assert.strictEqual(r.solicitud.estado, "trasladada");
+  assert.strictEqual(r.solicitud.areaActual, "ICETEX (Gestión Financiera)");
+  console.log("OK - catálogo ampliado: certificado ICETEX trasladado");
+})();
+
+// Catálogo ampliado: Copia Acta de Grado (8 días esperados) marcada como retrasada con fecha de referencia fija.
+(function catalogoAmpliadoActaDeGradoRetrasada() {
+  const dataset3 = { "POL-2026-0707": {
+    radicado: "POL-2026-0707",
+    nombreCertificado: "Copia Acta de Grado",
+    costo: "$47.700",
+    estado: "trasladada",
+    areaActual: "Legalizaciones (Apostilla)",
+    fechaRadicacion: "2026-08-20",
+    diasHabilesEsperados: 8,
+    historial: [{ area: "Registro y Control Académico", fecha: "2026-08-20", accion: "Solicitud radicada" }],
+  }};
+  const fechaReferencia = new Date("2026-09-03T00:00:00"); // bastante más de 8 días hábiles después
+  const r = buscarSolicitud("POL-2026-0707", dataset3, fechaReferencia);
+  assert.strictEqual(r.solicitud.tiempo.retrasada, true);
+  console.log("OK - catálogo ampliado: Copia Acta de Grado marcada como retrasada");
+})();
+
 // esFestivoColombia debe reconocer el festivo y rechazar un día cercano que no lo es.
 (function identificaFestivoColombiano() {
   assert.strictEqual(esFestivoColombia(new Date("2026-10-12T00:00:00")), true); // Día de la Raza
