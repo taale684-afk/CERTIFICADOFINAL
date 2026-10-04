@@ -1,7 +1,7 @@
 // test/solicitudes.test.js
 // Ejecutar con: npm test
 const assert = require("assert");
-const { buscarSolicitud } = require("../lib/solicitudes");
+const { buscarSolicitud, reenviarDocumento } = require("../lib/solicitudes");
 const { evaluarTiempo, diasHabilesEntre, esFestivoColombia } = require("../lib/tiempos");
 
 const dataset = {
@@ -175,6 +175,59 @@ const dataset = {
   const r = buscarSolicitud("POL-2026-0707", dataset3, fechaReferencia);
   assert.strictEqual(r.solicitud.tiempo.retrasada, true);
   console.log("OK - catálogo ampliado: Copia Acta de Grado marcada como retrasada");
+})();
+
+// Reenvío de documento — caso principal: solicitud "pendiente" pasa a "en revision"
+// y queda registrado un nuevo movimiento en el historial.
+(function reenvioCasoPrincipal() {
+  const datasetReenvio = {
+    "POL-2026-0417": {
+      radicado: "POL-2026-0417",
+      estado: "pendiente",
+      areaActual: "Decanatura de Facultad",
+      fechaRadicacion: "2026-08-12",
+      diasHabilesEsperados: 8,
+      historial: [{ area: "Registro y Control Académico", fecha: "2026-08-12", accion: "Solicitud radicada" }],
+    },
+  };
+  const r = reenviarDocumento("POL-2026-0417", "cedula_corregida.pdf", datasetReenvio, new Date("2026-08-20T00:00:00"));
+  assert.strictEqual(r.ok, true);
+  assert.strictEqual(r.solicitud.estado, "en revision");
+  assert.strictEqual(r.solicitud.historial.length, 2);
+  assert.ok(r.solicitud.historial[1].accion.includes("cedula_corregida.pdf"));
+  console.log("OK - reenvío de documento (caso principal: pendiente -> en revision)");
+})();
+
+// Reenvío de documento — caso de error: una solicitud "trasladada" no admite reenvío.
+(function reenvioCasoError() {
+  const datasetReenvio = {
+    "POL-2026-0512": {
+      radicado: "POL-2026-0512",
+      estado: "trasladada",
+      areaActual: "Legalizaciones (Apostilla)",
+      fechaRadicacion: "2026-08-05",
+      diasHabilesEsperados: 5,
+      historial: [],
+    },
+  };
+  const r = reenviarDocumento("POL-2026-0512", "documento.pdf", datasetReenvio);
+  assert.strictEqual(r.ok, false);
+  assert.strictEqual(r.codigo, 409);
+  assert.strictEqual(r.error, "estado_no_permite_reenvio");
+  assert.strictEqual(r.estadoActual, "trasladada");
+  console.log("OK - reenvío de documento (caso de error: estado trasladada lo rechaza)");
+})();
+
+// Reenvío de documento — caso de error: falta el nombre del archivo.
+(function reenvioSinArchivo() {
+  const datasetReenvio = {
+    "POL-2026-0417": { radicado: "POL-2026-0417", estado: "pendiente", areaActual: "Decanatura de Facultad", historial: [] },
+  };
+  const r = reenviarDocumento("POL-2026-0417", "", datasetReenvio);
+  assert.strictEqual(r.ok, false);
+  assert.strictEqual(r.codigo, 400);
+  assert.strictEqual(r.error, "archivo_requerido");
+  console.log("OK - reenvío de documento (caso de error: falta el archivo)");
 })();
 
 // esFestivoColombia debe reconocer el festivo y rechazar un día cercano que no lo es.

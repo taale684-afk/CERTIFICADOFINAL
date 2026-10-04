@@ -30,6 +30,7 @@
     <div class="screen hidden" id="screen-2">
       <h1>Estado actual</h1>
       <div id="estado-contenido"></div>
+      <div id="reenvio-contenido"></div>
       <div class="nav-row">
         <button class="ghost" onclick="goTo(1)">Volver a buscar</button>
         <button onclick="goTo(3)">Ver historial</button>
@@ -69,6 +70,7 @@
         ultimaConsulta = data;
         renderEstado(data);
         renderHistorial(data);
+        renderReenvio(data);
         goTo(2);
       } catch (e) {
         errDiv.innerHTML = '<p class="error">Ocurrió un error al consultar. Intenta de nuevo.</p>';
@@ -100,6 +102,50 @@
           </ul>
         </div>
       `;
+    }
+
+    function renderReenvio(data) {
+      const div = document.getElementById('reenvio-contenido');
+      if (data.estado !== 'pendiente') {
+        div.innerHTML = '';
+        return;
+      }
+      div.innerHTML = `
+        <div class="tiempo-box ok" style="margin-top:14px;">
+          <p style="margin:0 0 8px;"><strong>Esta solicitud requiere una modificación especial.</strong><br>
+          Si ya corregiste el documento, reenvíalo aquí (escribe el nombre del archivo).</p>
+          <div class="row">
+            <input id="nombre-archivo" placeholder="Ej. cedula_corregida.pdf" />
+            <button onclick="reenviar('${data.radicado}')">Reenviar</button>
+          </div>
+          <div id="reenvio-mensaje"></div>
+        </div>
+      `;
+    }
+
+    async function reenviar(radicado) {
+      const nombreArchivo = document.getElementById('nombre-archivo').value.trim();
+      const msgDiv = document.getElementById('reenvio-mensaje');
+      msgDiv.innerHTML = 'Enviando...';
+      try {
+        const res = await fetch('/api/solicitudes/' + encodeURIComponent(radicado) + '/reenvio', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ nombreArchivo }),
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          msgDiv.innerHTML = '<p class="error">' + data.mensaje + '</p>';
+          return;
+        }
+        ultimaConsulta = data;
+        renderEstado(data);
+        renderHistorial(data);
+        renderReenvio(data);
+        msgDiv.innerHTML = '';
+      } catch (e) {
+        msgDiv.innerHTML = '<p class="error">Ocurrió un error al reenviar. Intenta de nuevo.</p>';
+      }
     }
 
     function goTo(n) {
