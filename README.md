@@ -35,6 +35,10 @@ Con esto, el catálogo cubre los **10 certificados** publicados oficialmente por
 
 Las fechas de radicación de POL-2026-0417 y POL-2026-0512 son fijas (agosto de 2026), por lo que aparecerán como **retrasadas** si las consultas después de esa fecha: eso es precisamente el comportamiento que la alerta debe mostrar. POL-2026-0603 se radicó pocos días hábiles antes de esta entrega, por lo que se mantendrá **dentro del plazo** durante los primeros días hábiles siguientes; pasado ese margen, también empezará a mostrarse como retrasada, ya que el cálculo siempre se hace contra la fecha real del día en que se ejecuta la aplicación. Para ver ambos comportamientos (con y sin alerta) de forma controlada y permanente, revisa las pruebas automatizadas (`npm test`), que fijan una fecha de referencia específica para cada escenario.
 
+## Diseño visual
+
+La interfaz usa un sistema de diseño propio (navy institucional + dorado, tipografía serif para títulos e IBM Plex Sans para el resto), definido en `public/css/styles.css`. Usa Google Fonts vía `@import`, por lo que necesita conexión a internet para verse con la tipografía completa; sin conexión, el navegador cae automáticamente a una fuente del sistema sin romper el diseño.
+
 ## Cómo ejecutar el proyecto
 
 ```bash

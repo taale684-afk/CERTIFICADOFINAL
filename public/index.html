@@ -4,20 +4,23 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>PoliSeguimiento — Incremento 1</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
+  <div class="brand">Poli<span>Seguimiento</span></div>
+
   <div class="card">
     <div class="stepper">
-      <div class="step-tab active" id="tab-1">1. Buscar</div>
-      <div class="step-tab" id="tab-2">2. Estado actual</div>
-      <div class="step-tab" id="tab-3">3. Historial</div>
+      <div class="step-tab active" id="tab-1"><span class="num">1</span> Buscar</div>
+      <div class="step-tab" id="tab-2"><span class="num">2</span> Estado</div>
+      <div class="step-tab" id="tab-3"><span class="num">3</span> Historial</div>
     </div>
 
     <!-- Pantalla 1: Buscar -->
     <div class="screen" id="screen-1">
       <h1>Consulta el estado de tu solicitud</h1>
-      <p class="sub">Incremento 1 — ejemplo: POL-2026-0417, POL-2026-0512 o POL-2026-0603</p>
+      <p class="sub">Ejemplo: POL-2026-0417, POL-2026-0512 o POL-2026-0603</p>
       <div class="row">
         <input id="radicado" placeholder="Ej. POL-2026-0417" />
         <button onclick="consultar()">Consultar</button>
@@ -29,6 +32,7 @@
     <!-- Pantalla 2: Estado actual (incluye la alerta de tiempo) -->
     <div class="screen hidden" id="screen-2">
       <h1>Estado actual</h1>
+      <p class="sub">Esto es lo que sabemos de tu solicitud en este momento.</p>
       <div id="estado-contenido"></div>
       <div id="reenvio-contenido"></div>
       <div class="nav-row">
@@ -40,6 +44,7 @@
     <!-- Pantalla 3: Historial de movimientos -->
     <div class="screen hidden" id="screen-3">
       <h1>Historial de movimientos</h1>
+      <p class="sub">Áreas por las que ha pasado tu solicitud, en orden.</p>
       <div id="historial-contenido"></div>
       <div class="nav-row">
         <button class="ghost" onclick="goTo(2)">Volver al estado</button>
@@ -84,11 +89,11 @@
         : `<div class="tiempo-box ok">Tiempo transcurrido: ${t.diasHabilesTranscurridos} de ${t.diasHabilesEsperados} días hábiles esperados.</div>`;
 
       document.getElementById('estado-contenido').innerHTML = `
-        <p><strong>${data.nombreCertificado}</strong><br>
-        Radicado ${data.radicado} · Costo 2026: ${data.costo}
-        <span class="badge ${claseBadgeDe(data.estado)}">${data.estado}</span></p>
-        <p><strong>Área actual:</strong> ${data.areaActual}</p>
-        <p>${data.descripcionArea}</p>
+        <p class="ficha-titulo">${data.nombreCertificado}
+          <span class="badge ${claseBadgeDe(data.estado)}">${data.estado}</span></p>
+        <p class="ficha-meta">Radicado ${data.radicado} · Costo 2026: ${data.costo}</p>
+        <p class="ficha-campo"><strong>Área actual:</strong> ${data.areaActual}</p>
+        <p class="ficha-campo">${data.descripcionArea}</p>
         ${tiempoHtml}
       `;
     }
@@ -111,8 +116,8 @@
         return;
       }
       div.innerHTML = `
-        <div class="tiempo-box ok" style="margin-top:14px;">
-          <p style="margin:0 0 8px;"><strong>Esta solicitud requiere una modificación especial.</strong><br>
+        <div class="reenvio-box">
+          <p><strong>Esta solicitud requiere una modificación especial.</strong><br>
           Si ya corregiste el documento, reenvíalo aquí (escribe el nombre del archivo).</p>
           <div class="row">
             <input id="nombre-archivo" placeholder="Ej. cedula_corregida.pdf" />
