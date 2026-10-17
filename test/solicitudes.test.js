@@ -1,5 +1,8 @@
 // test/solicitudes.test.js
 // Ejecutar con: npm test
+// Las pruebas se ejecutan con la hora de Colombia (UTC-5) para que los resultados
+// no dependan de la zona horaria de la máquina donde se corran.
+process.env.TZ = "America/Bogota";
 const assert = require("assert");
 const { buscarSolicitud, reenviarDocumento } = require("../lib/solicitudes");
 const { evaluarTiempo, diasHabilesEntre, esFestivoColombia } = require("../lib/tiempos");
@@ -228,6 +231,18 @@ const dataset = {
   assert.strictEqual(r.codigo, 400);
   assert.strictEqual(r.error, "archivo_requerido");
   console.log("OK - reenvío de documento (caso de error: falta el archivo)");
+})();
+
+// Reenvío de documento — la fecha del historial debe ser la fecha local (Colombia),
+// no la fecha UTC: a las 10:00 p. m. del 5 de octubre, UTC ya es 6 de octubre.
+(function reenvioRegistraFechaLocal() {
+  const datasetFecha = {
+    "POL-2026-0417": { radicado: "POL-2026-0417", estado: "pendiente", areaActual: "Decanatura de Facultad",
+      fechaRadicacion: "2026-09-07", diasHabilesEsperados: 8, historial: [] },
+  };
+  const r = reenviarDocumento("POL-2026-0417", "cedula.pdf", datasetFecha, new Date(2026, 9, 5, 22, 0, 0));
+  assert.strictEqual(r.solicitud.historial[0].fecha, "2026-10-05");
+  console.log("OK - el historial registra la fecha local de Colombia (no la UTC)");
 })();
 
 // esFestivoColombia debe reconocer el festivo y rechazar un día cercano que no lo es.
