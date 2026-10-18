@@ -4,10 +4,20 @@ const express = require("express");
 const path = require("path");
 const fs = require("fs");
 const { buscarSolicitud, reenviarDocumento } = require("./lib/solicitudes");
+const { obtenerFechaReferencia } = require("./lib/config");
+const { formatoISO } = require("./lib/tiempos");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 const RUTA_DATOS = path.join(__dirname, "data", "solicitudes.json");
+const { fecha: FECHA_REF, simulada: FECHA_SIMULADA } = obtenerFechaReferencia();
+
+// Cada respuesta indica contra qué fecha se calculó el tiempo, para que una fecha simulada nunca pase desapercibida.
+function conReferencia(solicitud) {
+  solicitud.tiempo.fechaReferencia = formatoISO(FECHA_REF);
+  solicitud.tiempo.simulada = FECHA_SIMULADA;
+  return solicitud;
+}
 
 function cargarSolicitudes() {
   const raw = fs.readFileSync(RUTA_DATOS, "utf-8");
@@ -29,7 +39,7 @@ app.use(express.json());
 // GET /api/solicitudes/:radicado
 app.get("/api/solicitudes/:radicado", (req, res) => {
   const dataset = cargarSolicitudes();
-  const resultado = buscarSolicitud(req.params.radicado, dataset);
+  const resultado = buscarSolicitud(req.params.radicado, dataset, FECHA_REF);
 
   if (!resultado.ok) {
     const mensajes = {
@@ -42,7 +52,7 @@ app.get("/api/solicitudes/:radicado", (req, res) => {
     });
   }
 
-  return res.status(200).json(resultado.solicitud);
+  return res.status(200).json(conReferencia(resultado.solicitud));
 });
 
 // POST /api/solicitudes/:radicado/reenvio
@@ -50,7 +60,7 @@ app.get("/api/solicitudes/:radicado", (req, res) => {
 app.post("/api/solicitudes/:radicado/reenvio", (req, res) => {
   const dataset = cargarSolicitudes();
   const nombreArchivo = req.body && req.body.nombreArchivo;
-  const resultado = reenviarDocumento(req.params.radicado, nombreArchivo, dataset);
+  const resultado = reenviarDocumento(req.params.radicado, nombreArchivo, dataset, FECHA_REF);
 
   if (!resultado.ok) {
     const mensajes = {
@@ -66,10 +76,11 @@ app.post("/api/solicitudes/:radicado/reenvio", (req, res) => {
   }
 
   guardarSolicitudes(dataset);
-  return res.status(200).json(resultado.solicitud);
+  return res.status(200).json(conReferencia(resultado.solicitud));
 });
 
 app.listen(PORT, () => {
   console.log(`PoliSeguimiento API escuchando en http://localhost:${PORT}`);
+  console.log(FECHA_SIMULADA ? `Modo demostración: fecha simulada ${formatoISO(FECHA_REF)}` : "Fecha de referencia: hoy");
 });
 

@@ -31,6 +31,16 @@ Los radicados de prueba corresponden a dos certificados reales publicados por el
 | POL-2026-0706 | Certificado de Contenidos Programáticos | 8 días hábiles (formato digital) | $59.100 | Dentro del plazo |
 | POL-2026-0707 | Copia Acta de Grado | 8 días hábiles | $47.700 | Retrasada (radicada en agosto), trasladada |
 
+### Modo demostración (fecha simulada)
+
+El tiempo transcurrido se calcula contra la fecha real del día. Como los radicados de ejemplo tienen fechas fijas, con el paso de los días **todos terminan apareciendo como retrasados** y deja de verse el caso "dentro del plazo". Para demostrar ambos casos de forma reproducible, el proyecto incluye un modo demostración que fija la fecha de referencia en el **2 de octubre de 2026**:
+
+```bash
+npm run demo
+```
+
+En ese modo hay **4 solicitudes retrasadas** (`0417`, `0512`, `0703`, `0707`) y **6 dentro del plazo** (`0603`, `0701`, `0702`, `0704`, `0705`, `0706`), y la pantalla de estado muestra la leyenda "Fecha simulada para la demostración". Con `npm start` la fecha vuelve a ser la real. También puede usarse otra fecha: `node server.js --fecha-demo=AAAA-MM-DD` (o la variable de entorno `FECHA_DEMO`).
+
 Con esto, el catálogo cubre los **10 certificados** publicados oficialmente por el Politécnico Grancolombiano (https://www.poli.edu.co/certificados), no solo una muestra.
 
 Las fechas de radicación de POL-2026-0417 y POL-2026-0512 son fijas (agosto de 2026), por lo que aparecerán como **retrasadas** si las consultas después de esa fecha: eso es precisamente el comportamiento que la alerta debe mostrar. POL-2026-0603 se radicó pocos días hábiles antes de esta entrega, por lo que se mantendrá **dentro del plazo** durante los primeros días hábiles siguientes; pasado ese margen, también empezará a mostrarse como retrasada, ya que el cálculo siempre se hace contra la fecha real del día en que se ejecuta la aplicación. Para ver ambos comportamientos (con y sin alerta) de forma controlada y permanente, revisa las pruebas automatizadas (`npm test`), que fijan una fecha de referencia específica para cada escenario.
@@ -66,6 +76,7 @@ poliseguimiento/
 ├── server.js                # Servidor Express y definición del endpoint
 ├── lib/solicitudes.js       # Lógica de negocio (validación y búsqueda)
 ├── lib/tiempos.js           # Días hábiles, festivos colombianos y alerta de retraso
+├── lib/config.js            # Fecha de referencia (real o simulada para demostraciones)
 ├── data/solicitudes.json    # Datos de prueba (mock)
 ├── public/index.html        # Frontend del Incremento 1 (3 pantallas navegables)
 ├── public/css/styles.css    # Estilos, separados del HTML
