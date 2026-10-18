@@ -5,7 +5,8 @@
 process.env.TZ = "America/Bogota";
 const assert = require("assert");
 const { buscarSolicitud, reenviarDocumento } = require("../lib/solicitudes");
-const { evaluarTiempo, diasHabilesEntre, esFestivoColombia } = require("../lib/tiempos");
+const { evaluarTiempo, diasHabilesEntre, esFestivoColombia, formatoISO } = require("../lib/tiempos");
+const { obtenerFechaReferencia } = require("../lib/config");
 
 const dataset = {
   "POL-2026-0417": {
@@ -243,6 +244,41 @@ const dataset = {
   const r = reenviarDocumento("POL-2026-0417", "cedula.pdf", datasetFecha, new Date(2026, 9, 5, 22, 0, 0));
   assert.strictEqual(r.solicitud.historial[0].fecha, "2026-10-05");
   console.log("OK - el historial registra la fecha local de Colombia (no la UTC)");
+})();
+
+// Fecha de demostración: el argumento --fecha-demo fija la fecha de referencia.
+(function fechaDemoPorArgumento() {
+  const r = obtenerFechaReferencia(["node", "server.js", "--fecha-demo=2026-10-02"], {});
+  assert.strictEqual(r.simulada, true);
+  assert.strictEqual(formatoISO(r.fecha), "2026-10-02");
+  console.log("OK - la fecha de demostración se toma del argumento --fecha-demo");
+})();
+
+// Fecha de demostración: la variable de entorno FECHA_DEMO funciona si no hay argumento.
+(function fechaDemoPorEntorno() {
+  const r = obtenerFechaReferencia(["node", "server.js"], { FECHA_DEMO: "2026-10-02" });
+  assert.strictEqual(r.simulada, true);
+  assert.strictEqual(formatoISO(r.fecha), "2026-10-02");
+  console.log("OK - la fecha de demostración se toma de la variable FECHA_DEMO");
+})();
+
+// Fecha de demostración: un valor inválido se ignora y se usa la fecha real (no simulada).
+(function fechaDemoInvalidaUsaHoy() {
+  const ahora = new Date(2026, 9, 17, 9, 0, 0);
+  const r = obtenerFechaReferencia(["node", "server.js", "--fecha-demo=2026-13-45"], {}, ahora);
+  assert.strictEqual(r.simulada, false);
+  assert.strictEqual(r.fecha, ahora);
+  console.log("OK - una fecha de demostración inválida se ignora y se usa la fecha real");
+})();
+
+// Con la fecha de demostración 2026-10-02 el catálogo muestra casos con y sin alerta.
+(function catalogoConFechaDemoTieneAmbosCasos() {
+  const ds = require("../data/solicitudes.json");
+  const demo = obtenerFechaReferencia(["node", "server.js", "--fecha-demo=2026-10-02"], {}).fecha;
+  const retrasadas = Object.keys(ds).filter((id) => buscarSolicitud(id, ds, demo).solicitud.tiempo.retrasada);
+  assert.deepStrictEqual(retrasadas.sort(), ["POL-2026-0417", "POL-2026-0512", "POL-2026-0703", "POL-2026-0707"]);
+  assert.strictEqual(Object.keys(ds).length - retrasadas.length, 6);
+  console.log("OK - con la fecha de demostración hay 4 solicitudes retrasadas y 6 dentro del plazo");
 })();
 
 // esFestivoColombia debe reconocer el festivo y rechazar un día cercano que no lo es.

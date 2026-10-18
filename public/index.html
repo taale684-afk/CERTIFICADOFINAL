@@ -84,9 +84,10 @@
 
     function renderEstado(data) {
       const t = data.tiempo;
+      const notaSimulada = t.simulada ? `<br><small>Fecha simulada para la demostración: ${t.fechaReferencia}</small>` : '';
       const tiempoHtml = t.retrasada
-        ? `<div class="tiempo-box alerta">⚠ Esta solicitud lleva ${t.diasHabilesTranscurridos} días hábiles, por encima de los ${t.diasHabilesEsperados} días esperados para este certificado.</div>`
-        : `<div class="tiempo-box ok">Tiempo transcurrido: ${t.diasHabilesTranscurridos} de ${t.diasHabilesEsperados} días hábiles esperados.</div>`;
+        ? `<div class="tiempo-box alerta">⚠ Esta solicitud lleva ${t.diasHabilesTranscurridos} días hábiles, por encima de los ${t.diasHabilesEsperados} días esperados para este certificado.${notaSimulada}</div>`
+        : `<div class="tiempo-box ok">Tiempo transcurrido: ${t.diasHabilesTranscurridos} de ${t.diasHabilesEsperados} días hábiles esperados.${notaSimulada}</div>`;
 
       document.getElementById('estado-contenido').innerHTML = `
         <p class="ficha-titulo">${data.nombreCertificado}
