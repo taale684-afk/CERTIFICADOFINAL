@@ -1,3 +1,9 @@
 node_modules/
 .DS_Store
 *.log
+
+# Base de datos local (se crea sola al primer arranque con los datos de ejemplo)
+data/*.db
+data/*.db-journal
+data/*.db-wal
+data/*.db-shm
