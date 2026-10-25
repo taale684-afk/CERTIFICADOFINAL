@@ -12,7 +12,7 @@ Consulta del estado y la ubicación de una solicitud de certificado especial del
 - Manejar los casos de radicado inválido y radicado no encontrado.
 - **Reenvío de documento para una modificación especial**: cuando una solicitud está en estado `pendiente`, la pantalla de Estado actual muestra un formulario para reenviar el documento corregido (nombre de archivo). Esto agrega un movimiento al historial y cambia el estado a `en revision`. Si la solicitud no está `pendiente` (por ejemplo, `trasladada`), el sistema rechaza el reenvío con un mensaje explicando por qué.
 
-Quedan **fuera de alcance** en este incremento: el detalle del pendiente, el aviso de traslado entre áreas como pantalla independiente, y la integración con los sistemas reales de la institución (se usan datos de prueba en `data/solicitudes.json`). La validación de estos estados y áreas con Registro Académico, y la prueba con al menos dos usuarios sobre este prototipo navegable, quedan documentadas como próximos pasos en el plan de la iteración.
+Quedan **fuera de alcance** en este incremento: el detalle del pendiente, el aviso de traslado entre áreas como pantalla independiente, y la integración con los sistemas reales de la institución (se usan datos de ejemplo, guardados en una base de datos SQLite). La validación de estos estados y áreas con Registro Académico, y la prueba con al menos dos usuarios sobre este prototipo navegable, quedan documentadas como próximos pasos en el plan de la iteración.
 
 ### Nota sobre los datos de ejemplo y la fecha actual
 
@@ -49,6 +49,17 @@ Las fechas de radicación de POL-2026-0417 y POL-2026-0512 son fijas (agosto de 
 
 La interfaz usa un sistema de diseño propio (navy institucional + dorado, tipografía serif para títulos e IBM Plex Sans para el resto), definido en `public/css/styles.css`. Usa Google Fonts vía `@import`, por lo que necesita conexión a internet para verse con la tipografía completa; sin conexión, el navegador cae automáticamente a una fuente del sistema sin romper el diseño.
 
+## Base de datos
+
+Los datos viven en una base **SQLite** (`data/poliseguimiento.db`), con dos tablas: `solicitudes` (certificado, costo, estado, área, plazo esperado) y `movimientos` (el historial de cada solicitud). No hay que instalar ningún servidor de base de datos: es un archivo dentro del proyecto.
+
+- La primera vez que se inicia el servidor, la base **se crea sola** y se llena con las 10 solicitudes de ejemplo de `data/solicitudes.json`.
+- El estado `pendiente`, `en revision` o `trasladada` está protegido por una restricción de la base: no admite otros valores.
+- El reenvío de un documento se guarda en una transacción: o se guardan el nuevo estado y el movimiento juntos, o no se guarda nada.
+- `npm run reset-db` restablece la base a los datos de ejemplo originales.
+
+Requiere **Node.js 20 o superior** (`node -v` para comprobarlo). La librería `better-sqlite3` descarga un binario ya compilado al ejecutar `npm install`.
+
 ## Cómo ejecutar el proyecto
 
 ```bash
@@ -61,7 +72,7 @@ Luego abre `http://localhost:3000` en el navegador. Radicados de prueba disponib
 ### Endpoints disponibles
 
 - `GET /api/solicitudes/:radicado` — consulta el estado, el historial y el tiempo de una solicitud.
-- `POST /api/solicitudes/:radicado/reenvio` — reenvía un documento para resolver una modificación especial (body JSON: `{ "nombreArchivo": "..." }`). Solo funciona si la solicitud está en estado `pendiente`; **esto modifica `data/solicitudes.json` de forma permanente** (no hay base de datos todavía), así que conserva una copia del archivo original si quieres repetir la demostración varias veces.
+- `POST /api/solicitudes/:radicado/reenvio` — reenvía un documento para resolver una modificación especial (body JSON: `{ "nombreArchivo": "..." }`). Solo funciona si la solicitud está en estado `pendiente`; el cambio **se guarda en la base de datos** y sobrevive aunque se apague el servidor. Para volver a los datos de ejemplo y repetir la demostración, ejecuta `npm run reset-db`.
 
 ## Cómo correr las pruebas
 
@@ -73,14 +84,20 @@ npm test
 
 ```
 poliseguimiento/
-├── server.js                # Servidor Express y definición del endpoint
-├── lib/solicitudes.js       # Lógica de negocio (validación y búsqueda)
+├── server.js                # Arranque: crea la base de datos, la llena la primera vez y levanta el servidor
+├── lib/app.js               # Rutas de la API REST (GET consulta, POST reenvío)
+├── lib/solicitudes.js       # Lógica de negocio (validación, búsqueda y regla del reenvío)
 ├── lib/tiempos.js           # Días hábiles, festivos colombianos y alerta de retraso
 ├── lib/config.js            # Fecha de referencia (real o simulada para demostraciones)
-├── data/solicitudes.json    # Datos de prueba (mock)
-├── public/index.html        # Frontend del Incremento 1 (3 pantallas navegables)
+├── lib/repositorio.js       # Persistencia: guarda y lee solicitudes e historial en SQLite
+├── scripts/reset-db.js      # Restablece la base con los datos de ejemplo (npm run reset-db)
+├── data/solicitudes.json    # Datos de ejemplo (semilla con la que se llena la base)
+├── data/poliseguimiento.db  # Base de datos SQLite (se crea sola; no se sube a git)
+├── public/index.html        # Frontend (3 pantallas navegables)
 ├── public/css/styles.css    # Estilos, separados del HTML
-├── test/solicitudes.test.js
+├── test/solicitudes.test.js # Pruebas de la lógica de negocio
+├── test/repositorio.test.js # Pruebas de la base de datos
+├── test/api.test.js         # Pruebas de la API completa (consulta y reenvío de punta a punta)
 └── package.json
 ```
 

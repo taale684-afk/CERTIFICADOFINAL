@@ -1,14 +1,19 @@
 {
   "name": "poliseguimiento",
   "version": "0.1.0",
-  "description": "Incremento 1: consulta del estado de una solicitud de certificado especial por número de radicado.",
+  "description": "Consulta del estado, el historial y el plazo de certificados del Politécnico Grancolombiano, con reenvío de documentos.",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "test": "node test/solicitudes.test.js",
-    "demo": "node server.js --fecha-demo=2026-10-02"
+    "demo": "node server.js --fecha-demo=2026-10-02",
+    "reset-db": "node scripts/reset-db.js",
+    "test": "node test/solicitudes.test.js && node test/repositorio.test.js && node test/api.test.js"
   },
   "dependencies": {
+    "better-sqlite3": "^12.11.1",
     "express": "^4.19.2"
+  },
+  "engines": {
+    "node": ">=20"
   }
 }
